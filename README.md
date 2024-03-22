@@ -8,3 +8,4 @@
 | 4 | Write the program to implement using Bison | [View➚](https://github.com/KavyaTummepali/18CSC304J-CD-LAB/tree/main/EXP4%3ARUNNING%20CODE%20IN%20BISON) |
 | 5 | Compute the FIRST() and FOLLOW() | [View➚](https://github.com/KavyaTummepali/18CSC304J-CD-LAB/tree/main/EXP5%3AFIRST%20AND%20FOLLOW) |
 | 6 | Implement SLR Parsing | [View➚](https://github.com/KavyaTummepali/18CSC304J-CD-LAB/tree/main/EXP6%3ASLR%20PARSING) | 
+| 7 | Implementation of Java Programs | [View➚](https://github.com/KavyaTummepali/18CSC304J-CD-LAB/tree/main/EXP7%3AJAVA%20PROGRAMS) | 
