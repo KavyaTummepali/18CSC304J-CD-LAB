@@ -9,3 +9,4 @@
 | 5 | Compute the FIRST() and FOLLOW() | [View➚](https://github.com/KavyaTummepali/18CSC304J-CD-LAB/tree/main/EXP5%3AFIRST%20AND%20FOLLOW) |
 | 6 | Implement SLR Parsing | [View➚](https://github.com/KavyaTummepali/18CSC304J-CD-LAB/tree/main/EXP6%3ASLR%20PARSING) | 
 | 7 | Implementation of Java Programs | [View➚](https://github.com/KavyaTummepali/18CSC304J-CD-LAB/tree/main/EXP7%3AJAVA%20PROGRAMS) | 
+| 8 | Traversal of syntax tree and arthmetic operators | [View➚](https://github.com/KavyaTummepali/18CSC304J-CD-LAB/tree/main/EXP8%3ATRAVERSAL%20OF%20SYNTAX%20TREE%20AND%20ARTHMETIC%20OPERATORS) | 
