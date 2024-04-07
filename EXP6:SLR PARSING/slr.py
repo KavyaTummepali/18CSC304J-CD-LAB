@@ -1,41 +1,58 @@
 import copy
 
-# Perform grammar augmentation
+# perform grammar augmentation
 def grammarAugmentation(rules, nonterm_userdef, start_symbol):
+    # newRules stores processed output rules
     newRules = []
+
+    # create unique 'symbol' to represent new start symbol
     newChar = start_symbol + "'"
-    while newChar in nonterm_userdef:
+    while (newChar in nonterm_userdef):
         newChar += "'"
 
+    # adding rule to bring start symbol to RHS
     newRules.append([newChar, ['.', start_symbol]])
 
+    # new format => [LHS,[.RHS]], can't use dictionary since duplicate keys can be there
     for rule in rules:
+        # split LHS from RHS
         k = rule.split("->")
         lhs = k[0].strip()
         rhs = k[1].strip()
+
+        # split all rule at '|', keep single derivation in one rule
         multirhs = rhs.split('|')
         for rhs1 in multirhs:
             rhs1 = rhs1.strip().split()
+            # ADD dot pointer at start of RHS
             rhs1.insert(0, '.')
             newRules.append([lhs, rhs1])
     return newRules
 
-# Find closure
+# find closure
 def findClosure(input_state, dotSymbol):
     global start_symbol, separatedRulesList, statesDict
+
+    # closureSet stores processed output
     closureSet = []
 
+    # if findClosure is called for 1st time i.e. for I0, then LHS is received in "dotSymbol",
+    # add all rules starting with LHS symbol to closureSet
     if dotSymbol == start_symbol:
         for rule in separatedRulesList:
             if rule[0] == dotSymbol:
                 closureSet.append(rule)
     else:
+        # for any higher state than I0, set initial state as received input_state
         closureSet = input_state
 
+    # iterate till new states are getting added in closureSet
     prevLen = -1
     while prevLen != len(closureSet):
         prevLen = len(closureSet)
+        # "tempClosureSet" - used to eliminate concurrent modification error
         tempClosureSet = []
+        # if dot pointing at new symbol, add corresponding rules to tempClosure
         for rule in closureSet:
             indexOfDot = rule[1].index('.')
             if rule[1][-1] != '.':
@@ -43,147 +60,40 @@ def findClosure(input_state, dotSymbol):
                 for in_rule in separatedRulesList:
                     if dotPointsHere == in_rule[0] and in_rule not in tempClosureSet:
                         tempClosureSet.append(in_rule)
+
+        # add new closure rules to closureSet
         for rule in tempClosureSet:
             if rule not in closureSet:
                 closureSet.append(rule)
     return closureSet
 
-# Compute GOTO
-def compute_GOTO(state):
-    global statesDict, stateCount
-    generateStatesFor = []
-    for rule in statesDict[state]:
-        if rule[1][-1] != '.':
-            indexOfDot = rule[1].index('.')
-            dotPointsHere = rule[1][indexOfDot + 1]
-            if dotPointsHere not in generateStatesFor:
-                generateStatesFor.append(dotPointsHere)
-    if len(generateStatesFor) != 0:
-        for symbol in generateStatesFor:
-            GOTO(state, symbol)
+# Other functions will go here
 
-# GOTO
-def GOTO(state, charNextToDot):
-    global statesDict, stateCount, stateMap
-    newState = []
-    for rule in statesDict[state]:
-        indexOfDot = rule[1].index('.')
-        if rule[1][-1] != '.':
-            if rule[1][indexOfDot + 1] == charNextToDot:
-                shiftedRule = copy.deepcopy(rule)
-                shiftedRule[1][indexOfDot] = shiftedRule[1][indexOfDot + 1]
-                shiftedRule[1][indexOfDot + 1] = '.'
-                newState.append(shiftedRule)
-    addClosureRules = []
-    for rule in newState:
-        indexDot = rule[1].index('.')
-        if rule[1][-1] != '.':
-            closureRes = findClosure(newState, rule[1][indexDot + 1])
-            for rule in closureRes:
-                if rule not in addClosureRules and rule not in newState:
-                    addClosureRules.append(rule)
-    for rule in addClosureRules:
-        newState.append(rule)
-    stateExists = -1
-    for state_num in statesDict:
-        if statesDict[state_num] == newState:
-            stateExists = state_num
-            break
-    if stateExists == -1:
-        stateCount += 1
-        statesDict[stateCount] = newState
-        stateMap[(state, charNextToDot)] = stateCount
-    else:
-        stateMap[(state, charNextToDot)] = stateExists
+# *** MAIN *** - Driver Code
+# example sample set 01
+rules = ["E -> E + T | T",
+         "T -> T * F | F",
+         "F -> ( E ) | id"
+         ]
+nonterm_userdef = ['E', 'T', 'F']
+term_userdef = ['id', '+', '*', '(', ')']
+start_symbol = nonterm_userdef[0]
 
-# Generate states
-def generateStates(statesDict):
-    prev_len = -1
-    called_GOTO_on = []
-    while len(statesDict) != prev_len:
-        prev_len = len(statesDict)
-        keys = list(statesDict.keys())
-        for key in keys:
-            if key not in called_GOTO_on:
-                called_GOTO_on.append(key)
-                compute_GOTO(key)
+print("\nOriginal grammar input:\n")
+for y in rules:
+    print(y)
 
-# Calculation of FIRST
-def first(rule):
-    global diction
-    if len(rule) != 0 and (rule is not None):
-        if rule[0] in term_userdef:
-            return rule[0]
-        elif rule[0] == '#':
-            return '#'
-    if len(rule) != 0:
-        if rule[0] in list(diction.keys()):
-            fres = []
-            rhs_rules = diction[rule[0]]
-            for itr in rhs_rules:
-                indivRes = first(itr)
-                if type(indivRes) is list:
-                    for i in indivRes:
-                        fres.append(i)
-                else:
-                    fres.append(indivRes)
-            if '#' not in fres:
-                return fres
-            else:
-                fres.remove('#')
-                if len(rule) > 1:
-                    ansNew = first(rule[1:])
-                    if ansNew is not None:
-                        if type(ansNew) is list:
-                            return fres + ansNew
-                        else:
-                            return fres + [ansNew]
-                    else:
-                        return fres
-            fres.append('#')
-            return fres
+# print processed rules
+print("\nGrammar after Augmentation: \n")
+separatedRulesList = grammarAugmentation(rules, nonterm_userdef, start_symbol)
+for rule in separatedRulesList:
+    print(rule)
 
-# Calculation of FOLLOW
-def follow(nt):
-    global diction
-    solset = set()
-    if nt == start_symbol:
-        solset.add('$')
-    for curNT in diction:
-        rhs = diction[curNT]
-        for subrule in rhs:
-            if nt in subrule:
-                while nt in subrule:
-                    index_nt = subrule.index(nt)
-                    subrule = subrule[index_nt + 1:]
-                if len(subrule) != 0:
-                    res = first(subrule)
-                    if '#' in res:
-                        res.remove('#')
-                        ansNew = follow(curNT)
-                        if ansNew is not None:
-                            if type(ansNew) is list:
-                                newList = res + ansNew
-                            else:
-                                newList = res + [ansNew]
-                            res = newList
-                    else:
-                        if nt != curNT:
-                            res = follow(curNT)
-                if res is not None:
-                    if type(res) is list:
-                        for g in res:
-                            solset.add(g)
-                    else:
-                        solset.add(res)
-    return list(solset)
+# find closure
+start_symbol = separatedRulesList[0][0]
+print("\nCalculated closure: I0\n")
+I0 = findClosure(0, start_symbol)
+for rule in I0:
+    print(rule)
 
-# Create parsing table
-def createParseTable(statesDict, stateMap, T, NT):
-    global separatedRulesList, diction
-    rows = list(statesDict.keys())
-    cols = T + ['$'] + NT
-    Table = []
-    tempRow = [''] * len(cols)
-    for _ in range(len(rows)):
-        Table.append(copy.deepcopy(tempRow))
+# Rest of the code will go here
