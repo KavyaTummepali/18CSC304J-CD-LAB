@@ -1,0 +1,29 @@
+public class MachineCodeGenerator {
+
+    public static void main(String[] args) {
+        String machineCode = generateMachineCode("x", "y", "z");
+        System.out.println("Machine Code:");
+        System.out.println(machineCode);
+    }
+
+    public static String generateMachineCode(String x, String y, String z) {
+        // Assuming MIPS assembly language for demonstration
+
+        // Load value of variable y into register $t0
+        String loadY = "lw $t0, " + y;
+
+        // Load value of variable z into register $t1
+        String loadZ = "lw $t1, " + z;
+
+        // Add values in registers $t0 and $t1 and store result in register $t2
+        String add = "add $t2, $t0, $t1";
+
+        // Store result in register $t2 into variable x
+        String storeResult = "sw $t2, " + x;
+
+        // Combine all instructions into a single machine code string
+        String machineCode = loadY + "\n" + loadZ + "\n" + add + "\n" + storeResult;
+
+        return machineCode;
+    }
+}
