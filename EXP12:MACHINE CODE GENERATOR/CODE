@@ -1,0 +1,32 @@
+public class MachineCodeGenerator {
+
+    public static void main(String[] args) {
+        String machineCode = generateMachineCode("array", "index", "value");
+        System.out.println("Machine Code:");
+        System.out.println(machineCode);
+    }
+
+    public static String generateMachineCode(String array, String index, String value) {
+        // Assuming MIPS assembly language for demonstration
+
+        // Calculate the memory address corresponding to the indexed element
+        // Load the base address of the array into register $t0
+        String loadBaseAddress = "la $t0, " + array;
+
+        // Load the index into register $t1
+        String loadIndex = "lw $t1, " + index;
+
+        // Calculate the memory address by adding the index to the base address
+        // Each element in the array is of size 4 bytes (assuming integers)
+        String calculateAddress = "sll $t1, $t1, 2";  // Multiply index by 4 (shift left by 2 bits)
+        String addAddress = "add $t1, $t1, $t0";     // Add index to base address
+
+        // Store the value into the memory address calculated
+        String storeValue = "sw " + value + ", 0($t1)"; // Offset is 0 since we're accessing the indexed element
+
+        // Combine all instructions into a single machine code string
+        String machineCode = loadBaseAddress + "\n" + loadIndex + "\n" + calculateAddress + "\n" + addAddress + "\n" + storeValue;
+
+        return machineCode;
+    }
+}
