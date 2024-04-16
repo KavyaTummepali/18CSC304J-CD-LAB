@@ -1,4 +1,4 @@
-|# 18CSC304J-COMPILER-DESIGN-LAB
+# 18CSC304J-COMPILER-DESIGN-LAB
 ![C](https://img.shields.io/badge/C-00599C?style=for-the-badge&logo=c&logoColor=white)
 ![C++](https://img.shields.io/badge/C++-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white)
 | S.No | Experiment Name | Link | 
